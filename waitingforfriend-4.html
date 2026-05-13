@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CodePlay | Waiting Lobby</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Fredoka One', cursive;
+    }
+    .fade-in {
+      animation: fadeIn 1s ease-in forwards;
+      opacity: 0; 
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center text-white px-4"
+      style="background: radial-gradient(circle at top left, #1e3a8a, #000);">
+
+  <p class="text-lg text-gray-300 mb-4">Room Code: <span class="font-bold text-yellow-300" id="roomCode">...</span></p>
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-4" id="players-container">
+    <div class="bg-gray-800 rounded-lg p-4 player-card animate-pulse">
+      <img src="https://api.dicebear.com/8.x/adventurer/svg?seed=Warrior1"
+           class="w-24 h-24 mx-auto rounded-full border-4 border-yellow-400" />
+      <p class="mt-2 font-semibold text-lg text-center">Waiting...</p>
+    </div>
+    <div class="bg-gray-800 rounded-lg p-4 player-card animate-pulse">
+      <img src="https://api.dicebear.com/8.x/adventurer/svg?seed=Hero2"
+           class="w-24 h-24 mx-auto rounded-full border-4 border-pink-400" />
+      <p class="mt-2 font-semibold text-lg text-center">Waiting...</p>
+    </div>
+    <div class="bg-gray-800 rounded-lg p-4 player-card animate-pulse">
+      <img src="https://api.dicebear.com/8.x/adventurer/svg?seed=Ranger3"
+           class="w-24 h-24 mx-auto rounded-full border-4 border-green-400" />
+      <p class="mt-2 font-semibold text-lg text-center">Waiting...</p>
+    </div>
+    <div class="bg-gray-800 rounded-lg p-4 player-card animate-pulse">
+      <img src="https://api.dicebear.com/8.x/adventurer/svg?seed=Knight4"
+           class="w-24 h-24 mx-auto rounded-full border-4 border-blue-400" />
+      <p class="mt-2 font-semibold text-lg text-center">Waiting...</p>
+    </div>
+  </div>
+
+  <p class="mt-4 text-pink-300 text-lg animate-bounce">Waiting for players to join...</p>
+
+  <button onclick="startGame()" class="mt-6 bg-green-500 hover:bg-green-600 px-6 py-3 text-white font-bold rounded-full transition-all duration-300">
+    🚀 Start Game
+  </button>
+
+  <div class="mt-10">
+    <a href="playfriends-2.html" class="underline text-blue-400 hover:text-blue-200">Switch to 2-Player Lobby</a>
+  </div>
+
+  <script>
+    const roomCode = localStorage.getItem("room_code");
+    if (roomCode) {
+      document.getElementById("roomCode").innerText = roomCode;
+    }
+
+    function loadPlayers() {
+      fetch(`get_players.php?room_code=${roomCode}`)
+        .then(res => res.json())
+        .then(players => {
+          console.log("Loaded players from DB:", players); // Debug log
+          const cards = document.querySelectorAll(".player-card");
+
+          players.forEach((name, i) => {
+            if (name && cards[i]) {
+              cards[i].classList.remove("animate-pulse");
+              cards[i].querySelector("p").innerText = name;
+              cards[i].querySelector("img").src =
+                `https://api.dicebear.com/8.x/adventurer/svg?seed=${encodeURIComponent(name)}`;
+              // Add a green border to indicate active player
+              cards[i].querySelector("img").classList.remove("border-yellow-400", "border-pink-400", "border-green-400", "border-blue-400");
+              cards[i].querySelector("img").classList.add("border-green-400");
+            } else if (cards[i]) {
+              // Reset to waiting state if no player
+              cards[i].classList.add("animate-pulse");
+              cards[i].querySelector("p").innerText = "Waiting...";
+              const borders = ["border-yellow-400", "border-pink-400", "border-green-400", "border-blue-400"];
+              cards[i].querySelector("img").classList.remove("border-green-400");
+              cards[i].querySelector("img").classList.add(borders[i]);
+            }
+          });
+        })
+        .catch(err => console.error("Error loading players:", err));
+    }
+
+    // Load players initially
+    if (roomCode) {
+      loadPlayers();
+      // Refresh player list every 3 seconds
+      setInterval(loadPlayers, 3000);
+    }
+  </script>
+
+  <script>
+    function startGame() {
+      alert("Game Started! Let's code and play 🎮");
+
+      const username = localStorage.getItem("username");
+      const roomCode = localStorage.getItem("room_code");
+
+      if (!username || !roomCode) {
+        alert("Missing username or room code.");
+        return;
+      }
+
+      fetch(`get_role.php?room_code=${roomCode}&username=${username}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.role) {
+            window.location.href = `${data.role}game-4players.html`;
+          } else {
+            alert("Your role was not found in this room.");
+          }
+        })
+        .catch(err => {
+          console.error("Error:", err);
+          alert("An error occurred while starting the game.");
+        });
+    }
+  </script>
+
+</body>
+</html>
+

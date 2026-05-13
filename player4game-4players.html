@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Player 4 - CodePlay Quiz</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #111827, #1f2937);
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .glass {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center text-white p-6">
+
+  <div class="max-w-3xl w-full bg-gray-800 rounded-xl shadow-xl glass p-6">
+    <div class="text-2xl font-bold text-yellow-400 text-center mb-6">🎮 Player 4 - CodePlay Quiz</div>
+    <div id="quiz-container"></div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        text: "Which method converts JSON data to a JavaScript object?",
+        options: ["JSON.stringify()", "JSON.parse()", "parseJSON()", "convertJSON()"],
+        answer: "JSON.parse()"
+      },
+      {
+        text: "What is the correct syntax to create a function in JavaScript?",
+        options: ["function myFunction()", "create myFunction()", "def myFunction()", "function:myFunction()"],
+        answer: "function myFunction()"
+      },
+      {
+        text: "Which built-in method returns the length of a string?",
+        options: ["length()", "getSize()", "count()", "length"],
+        answer: "length"
+      },
+      {
+        text: "How do you declare a JavaScript variable?",
+        options: ["v myVar;", "var myVar;", "let = myVar;", "dim myVar;"],
+        answer: "var myVar;"
+      },
+      {
+        text: "Which keyword is used to loop over an array?",
+        options: ["map", "for", "loop", "each"],
+        answer: "for"
+      }
+    ];
+
+    let currentIndex = 0;
+    let score4 = 0;
+    const container = document.getElementById("quiz-container");
+
+    function loadQuestion(index) {
+      const q = questions[index];
+      container.innerHTML = `
+        <div class="bg-red-700 p-6 rounded-xl">
+          <h2 class="text-xl font-bold mb-4">Question ${index + 1}</h2>
+          <p class="mb-4">${q.text}</p>
+          <div class="space-y-2">
+            ${q.options.map(opt => `
+              <label class="block">
+                <input type="radio" name="q${index}" value="${opt}" class="mr-2"> ${opt}
+              </label>
+            `).join('')}
+          </div>
+          <div class="text-center mt-6">
+            <button id="nextBtn" class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-full font-bold transition-all">Next</button>
+          </div>
+        </div>
+      `;
+
+      document.getElementById("nextBtn").addEventListener("click", () => {
+        const selected = document.querySelector(`input[name='q${index}']:checked`);
+        if (selected && selected.value === q.answer) {
+          score4++;
+        }
+        currentIndex++;
+        if (currentIndex >= questions.length) {
+          localStorage.setItem("player4Score", score4);
+          showFinalScore();
+        } else {
+          loadQuestion(currentIndex);
+        }
+      });
+    }
+
+    function showFinalScore() {
+      const player1Score = localStorage.getItem("player1Score") || "Not submitted yet";
+      const player2Score = localStorage.getItem("player2Score") || "Not submitted yet";
+      const player3Score = localStorage.getItem("player3Score") || "Not submitted yet";
+      container.innerHTML = `
+        <div class="text-center bg-red-900 p-8 rounded-xl">
+          <h2 class="text-4xl font-bold text-yellow-300 mb-4">🎉 You Finished!</h2>
+          <div class="space-y-3 text-xl">
+            <p>Player 1 Score: <span class="font-bold">${player1Score}</span></p>
+            <p>Player 2 Score: <span class="font-bold">${player2Score}</span></p>
+            <p>Player 3 Score: <span class="font-bold">${player3Score}</span></p>
+            <p>Player 4 Score: <span class="font-bold">${score4} / ${questions.length}</span></p>
+          </div>
+          <button onclick="location.reload()" class="mt-6 bg-white text-black px-6 py-2 rounded-full font-semibold hover:bg-gray-200 transition">Play Again</button>
+        </div>
+      `;
+    }
+
+    loadQuestion(currentIndex);
+  </script>
+
+</body>
+</html>

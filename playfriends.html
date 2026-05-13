@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Play with Friends | CodePlay</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes pop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center text-white px-4"
+      style="background: radial-gradient(circle at top left, #1e3a8a, #000);">
+
+
+  <div class="text-center w-full max-w-2xl bg-black/30 backdrop-blur-md p-8 rounded-3xl shadow-2xl border border-white/10">
+    <h1 class="text-4xl font-bold mb-4 animate-bounce">🎮 Play With Friends</h1>
+    <p class="text-lg text-gray-300 mb-6">Invite your friends, create or join a coding game room, and learn together!</p>
+
+    <!-- Create Room -->
+    <div class="bg-gradient-to-br from-purple-700 to-indigo-700 p-6 rounded-xl mb-6 shadow-lg animate-[pop_1s_ease-in-out]">
+      <h2 class="text-2xl font-semibold mb-2">🚀 Create Room</h2>
+      <button onclick="createRoom()" class="bg-white text-purple-700 hover:bg-purple-100 px-6 py-2 rounded-full font-bold transition">
+        Generate Room Code
+      </button>
+      <p id="room-code-msg" class="mt-3 text-yellow-300 hidden"></p>
+    </div>
+
+    <!-- Join Room -->
+    <div class="bg-gradient-to-br from-green-600 to-emerald-700 p-6 rounded-xl shadow-lg animate-[pop_1s_ease-in-out_0.2s]">
+      <h2 class="text-2xl font-semibold mb-2">🤝 Join Room</h2>
+      <input type="text" id="join-code" placeholder="Enter Room Code"
+             class="w-full px-4 py-2 rounded-lg bg-white text-black font-bold border-none shadow-inner outline-none text-center text-xl tracking-wide">
+      <button onclick="joinRoom()" class="mt-4 bg-white text-green-700 hover:bg-green-100 px-6 py-2 rounded-full font-bold transition">
+        Join Room
+      </button>
+      <p id="join-status" class="mt-3 text-lime-200 hidden"></p>
+    </div>
+  </div>
+
+  <!-- JS -->
+  <script>
+   function generateRoomCode() {
+  return Math.random().toString(36).substring(2, 8).toUpperCase();
+}
+
+function createRoom() {
+  const code = generateRoomCode();
+  const username = localStorage.getItem("username"); // Username from login/registration
+
+  const roomMsg = document.getElementById("room-code-msg");
+
+  fetch("create_room.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+      body: `room_code=${encodeURIComponent(code)}&username=${encodeURIComponent(username)}`
+
+  }) 
+  .then(response => response.text())
+  .then(msg => {
+    roomMsg.style.display = "block";
+    if (msg.includes("successfully")) {
+      // Store room code for the waiting page
+      localStorage.setItem("room_code", code);
+      roomMsg.innerHTML = `🔐 Share this room code: <strong>${code}</strong><br>${msg}<br>
+        <button onclick="goToWaitingRoom()" class="mt-2 bg-blue-500 hover:bg-blue-600 px-4 py-2 text-white rounded-full font-bold transition">
+          Go to Waiting Room
+        </button>`;
+    } else {
+      roomMsg.innerText = `❌ ${msg}`;
+    }
+  })
+  .catch(error => {
+    console.error("Error creating room:", error);
+    roomMsg.style.display = "block";
+    roomMsg.innerText = "❌ Failed to create room. Please try again.";
+  });
+}
+
+function goToWaitingRoom() {
+  window.location.href = "waitingforfriend-4.html";
+}
+
+function joinRoom() {
+  const input = document.getElementById("join-code");
+  const code = input.value.trim().toUpperCase();
+  const username = localStorage.getItem("username");
+
+  const joinStatus = document.getElementById("join-status");
+
+  if (code.length !== 6) {
+    alert("❌ Please enter a valid 6-character room code!");
+    return;
+  }
+
+  fetch("join_room.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: `room_code=${encodeURIComponent(code)}&username=${encodeURIComponent(username)}`
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      // Store room code in localStorage for the waiting page
+      localStorage.setItem("room_code", data.room_code);
+      
+      joinStatus.style.display = "block";
+      joinStatus.innerText = `🎉 ${data.message}`;
+      
+      // Redirect to waiting page after a short delay
+      setTimeout(() => {
+        window.location.href = "waitingforfriend-4.html";
+      }, 1500);
+    } else {
+      joinStatus.style.display = "block";
+      joinStatus.innerText = data.message;
+    }
+  })
+  .catch(error => {
+    console.error("Error joining room:", error);
+    joinStatus.style.display = "block";
+    joinStatus.innerText = "❌ Failed to join room. Please try again.";
+  });
+}
+  </script>
+</body>
+</html>

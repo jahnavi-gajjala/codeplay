@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Java Level 5</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="text-white min-h-screen flex items-center justify-center p-4" style="background: radial-gradient(circle at top left, #1e3a8a, #000);">
+
+  <div class="bg-black/30 backdrop-blur-lg p-8 rounded-2xl max-w-xl w-full shadow-xl border border-white/10 text-center">
+    <h1 class="text-3xl font-bold mb-6">☕ Java - Level 5</h1>
+    <div id="quiz-area">
+      <h2 id="question" class="text-xl font-semibold mb-4">Loading...</h2>
+      <div id="options" class="space-y-2 mb-6"></div>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        q: "Which keyword is used for accessing the superclass constructor?",
+        options: ["super", "this", "extends", "final"],
+        correct: "super"
+      },
+      {
+        q: "Which collection class allows you to grow or shrink its size and provides indexed access to its elements, but is not synchronized?",
+        options: ["ArrayList", "HashMap", "Vector", "LinkedList"],
+        correct: "ArrayList"
+      },
+      {
+        q: "Which exception is thrown when a negative size is passed to an array?",
+        options: ["NegativeArraySizeException", "NullPointerException", "ArrayIndexOutOfBoundsException", "IllegalArgumentException"],
+        correct: "NegativeArraySizeException"
+      },
+      {
+        q: "Which of the following best describes the Java memory model?",
+        options: ["Thread-safe by default", "Managed by JVM, includes heap and stack", "No garbage collection", "C-style manual memory management"],
+        correct: "Managed by JVM, includes heap and stack"
+      },
+      {
+        q: "What is the purpose of the `transient` keyword?",
+        options: ["Prevents variable from being serialized", "Marks a method final", "Used for multithreading", "Used for dynamic binding"],
+        correct: "Prevents variable from being serialized"
+      }
+    ];
+
+    let current = 0;
+    let score = 0;
+
+    function loadNextQuestion() {
+      if (current >= questions.length) {
+        const quizArea = document.getElementById("quiz-area");
+
+        if (score === questions.length) {
+          quizArea.innerHTML = `
+            <h2 class="text-2xl font-bold text-green-400 mb-4">🏆 Game Completed!</h2>
+            <p class="mb-6">Your Score: ${score}/${questions.length}</p>
+            <p class="text-yellow-400 font-bold mb-4">🎉 Congratulations, Java Master!</p>
+            <a href="main.html" class="inline-block bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-full text-white font-bold mb-4">🏅 View Home</a><br>
+            <a href="lang.html" class="inline-block bg-purple-700 hover:bg-purple-800 px-6 py-2 rounded-full font-bold">Back to Languages</a>
+          `;
+        } else {
+          quizArea.innerHTML = `
+            <h2 class="text-2xl font-bold text-red-500 mb-4">❌ Level 5 Failed!</h2>
+            <p class="mb-6">Your Score: ${score}/${questions.length}</p>
+            <a href="javalevel5.html" class="inline-block bg-red-600 hover:bg-red-700 px-6 py-2 rounded-full font-bold text-white mb-4">🔁 Retry Level</a><br>
+            <a href="lang.html" class="inline-block bg-purple-700 hover:bg-purple-800 px-6 py-2 rounded-full font-bold">Back to Languages</a>
+          `;
+        }
+        return;
+      }
+
+      const q = questions[current];
+      document.getElementById("question").innerText = `Q${current + 1}. ${q.q}`;
+      const optionsHTML = q.options.map(option => `
+        <button onclick="checkAnswer('${option}')" class="bg-white text-black font-semibold px-4 py-2 rounded-lg w-full hover:bg-yellow-100 transition">
+          ${option}
+        </button>
+      `).join("");
+
+      document.getElementById("options").innerHTML = optionsHTML;
+    }
+
+    function checkAnswer(selected) {
+      const correct = questions[current].correct;
+      if (selected === correct) {
+        score++;
+      }
+      current++;
+      loadNextQuestion();
+    }
+
+    loadNextQuestion();
+  </script>
+</body>
+</html>

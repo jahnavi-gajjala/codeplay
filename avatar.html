@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Select Your Avatar</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(to right bottom, #0f172a, #1e293b);
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .avatar-card {
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .avatar-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    }
+    .selected {
+      border: 4px solid #3b82f6;
+    }
+  </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen text-white p-6">
+  <h1 class="text-3xl font-bold mb-8">🎭 Choose Your Avatar</h1>
+  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
+    <!-- Avatars -->
+    <img src="https://api.dicebear.com/8.x/adventurer/svg?seed=1" class="avatar-card w-24 h-24 rounded-full cursor-pointer" onclick="selectAvatar(this)">
+    <img src="https://api.dicebear.com/8.x/adventurer/svg?seed=2" class="avatar-card w-24 h-24 rounded-full cursor-pointer" onclick="selectAvatar(this)">
+    <img src="https://api.dicebear.com/8.x/adventurer/svg?seed=3" class="avatar-card w-24 h-24 rounded-full cursor-pointer" onclick="selectAvatar(this)">
+    <img src="https://api.dicebear.com/8.x/adventurer/svg?seed=4" class="avatar-card w-24 h-24 rounded-full cursor-pointer" onclick="selectAvatar(this)">
+    <img src="https://api.dicebear.com/8.x/adventurer/svg?seed=5" class="avatar-card w-24 h-24 rounded-full cursor-pointer" onclick="selectAvatar(this)">
+    <img src="https://api.dicebear.com/8.x/adventurer/svg?seed=6" class="avatar-card w-24 h-24 rounded-full cursor-pointer" onclick="selectAvatar(this)">
+    <img src="https://api.dicebear.com/8.x/adventurer/svg?seed=7" class="avatar-card w-24 h-24 rounded-full cursor-pointer" onclick="selectAvatar(this)">
+    <img src="https://api.dicebear.com/8.x/adventurer/svg?seed=8" class="avatar-card w-24 h-24 rounded-full cursor-pointer" onclick="selectAvatar(this)">
+    <img src="https://api.dicebear.com/8.x/adventurer/svg?seed=9" class="avatar-card w-24 h-24 rounded-full cursor-pointer" onclick="selectAvatar(this)">
+    <img src="https://api.dicebear.com/8.x/adventurer/svg?seed=10" class="avatar-card w-24 h-24 rounded-full cursor-pointer" onclick="selectAvatar(this)">
+  </div>
+
+  <button onclick="saveAvatar()" class="mt-8 bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-full font-semibold">Continue</button>
+
+
+  <script>
+  let selectedAvatar = null;
+
+  function selectAvatar(el) {
+    document.querySelectorAll('.avatar-card').forEach(img => img.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedAvatar = el.src;
+  }
+
+  function saveAvatar() {
+    if (!selectedAvatar) {
+      alert("Please select an avatar!");
+      return;
+    }
+
+    // Save avatar to localStorage
+    localStorage.setItem("playerAvatar", selectedAvatar);
+
+    const username = localStorage.getItem("username");
+    const roomCode = localStorage.getItem("room_code");
+
+    if (!username || !roomCode) {
+      alert("Missing user info. Please rejoin the room.");
+      return;
+    }
+
+    // Redirect to waiting room after saving avatar
+    window.location.href = "playfriends.html";
+  }
+</script>
+
+
+</body>
+</html>

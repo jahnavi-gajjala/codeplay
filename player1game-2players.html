@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Player 1 - CodePlay Quiz</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #1f2937, #111827);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .glass {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+  </style>
+</head>
+<body class="min-h-screen text-white flex flex-col items-center justify-center p-6">
+
+  <div class="w-full max-w-3xl bg-gray-800 rounded-xl shadow-xl glass p-8">
+    <div class="text-2xl font-bold text-yellow-400 text-center mb-6">🎮 Player 1 - CodePlay Quiz</div>
+    <div id="quiz-container"></div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        text: "What does HTML stand for?",
+        options: [
+          "Hyper Text Markup Language",
+          "Home Tool Markup Language",
+          "Hyperlinks and Text Markup Language",
+          "Hyper Tool Multi Language"
+        ],
+        answer: "Hyper Text Markup Language"
+      },
+      {
+        text: "Which symbol is used for comments in JavaScript?",
+        options: [
+          "//",
+          "!-- --",
+          "#",
+          "/* */"
+        ],
+        answer: "//"
+      },
+      {
+        text: "What is the output of: console.log(typeof null)?",
+        options: [
+          "object",
+          "null",
+          "undefined",
+          "boolean"
+        ],
+        answer: "object"
+      }
+    ];
+
+    let currentIndex = 0;
+    let score1 = 0;
+    const container = document.getElementById("quiz-container");
+
+    function loadQuestion(index) {
+      const q = questions[index];
+      container.innerHTML = `
+        <div class="bg-blue-700 p-6 rounded-xl">
+          <h2 class="text-xl font-bold mb-4">Question ${index + 1}</h2>
+          <p class="mb-4">${q.text}</p>
+          <div class="space-y-2">
+            ${q.options.map(opt => `
+              <label class="block">
+                <input type="radio" name="q${index}" value="${opt}" class="mr-2"> ${opt}
+              </label>
+            `).join('')}
+          </div>
+          <div class="text-center mt-6">
+            <button id="nextBtn" class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-full font-bold transition-all">Next</button>
+          </div>
+        </div>
+      `;
+
+      document.getElementById("nextBtn").addEventListener("click", () => {
+        const selected = document.querySelector(`input[name='q${index}']:checked`);
+        if (selected && selected.value === q.answer) {
+          score1++;
+        }
+        currentIndex++;
+        if (currentIndex >= questions.length) {
+          localStorage.setItem("player1Score", score1);
+          showFinalScore();
+        } else {
+          loadQuestion(currentIndex);
+        }
+      });
+    }
+
+    function showFinalScore() {
+      const player2Score = localStorage.getItem("player2Score") || "Not submitted yet";
+      container.innerHTML = `
+        <div class="text-center bg-blue-900 p-8 rounded-xl">
+          <h2 class="text-4xl font-bold text-yellow-300 mb-4">🎉 You Finished!</h2>
+          <p class="text-xl mb-2">Your Score: <span class="font-bold">${score1} / ${questions.length}</span></p>
+          <p class="text-xl mb-4">Player 2 Score: <span class="font-bold">${player2Score}</span></p>
+          <button onclick="location.reload()" class="mt-4 bg-white text-black px-6 py-2 rounded-full font-semibold hover:bg-gray-200 transition">Play Again</button>
+        </div>
+      `;
+    }
+
+    loadQuestion(currentIndex);
+  </script>
+
+</body>
+</html>

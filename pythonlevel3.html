@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Python Level 3</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="text-white min-h-screen flex items-center justify-center p-4" style="background: radial-gradient(circle at top left, #1e3a8a, #000);">
+
+  <div class="bg-black/30 backdrop-blur-lg p-8 rounded-2xl max-w-xl w-full shadow-xl border border-white/10 text-center">
+    <h1 class="text-3xl font-bold mb-6">🐍 Python - Level 3</h1>
+    <div id="quiz-area">
+      <h2 id="question" class="text-xl font-semibold mb-4">Loading...</h2>
+      <div id="options" class="space-y-2 mb-6"></div>
+      <button onclick="loadNextQuestion()" id="next-btn" class="text-black font-bold px-6 py-2 rounded-full hover:bg-yellow-600 transition hidden">Next</button>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        q: "What is the output of the following?\n\nprint(bool(0), bool(3.14159), bool(-3))",
+        options: ["False True True", "True False False", "False False True", "True True True"],
+        correct: "False True True"
+      },
+      {
+        q: "Which of the following is used to define a block of code in Python?",
+        options: ["Brackets", "Indentation", "Parentheses", "Quotation"],
+        correct: "Indentation"
+      },
+      {
+        q: "What will this return?\n\n'x' in ['x', 'y', 'z']",
+        options: ["True", "False", "x", "Error"],
+        correct: "True"
+      },
+      {
+        q: "Which data type is mutable in Python?",
+        options: ["String", "Tuple", "List", "Integer"],
+        correct: "List"
+      },
+      {
+        q: "What will be the output?\n\ndef add(x, y=2): return x + y\nprint(add(3))",
+        options: ["5", "3", "2", "Error"],
+        correct: "5"
+      }
+    ];
+
+    let current = 0;
+    let score = 0;
+
+    function loadNextQuestion() {
+      if (current >= questions.length) {
+        const quizArea = document.getElementById("quiz-area");
+        if (score === questions.length) {
+          quizArea.innerHTML = `
+            <h2 class="text-2xl font-bold text-green-400 mb-4">🎉 Level 3 Completed!</h2>
+            <p class="mb-6">Your Score: ${score}/${questions.length}</p>
+            <a href="pythonlevel4.html" class="inline-block bg-blue-500 px-6 py-2 rounded-full font-bold text-white hover:bg-blue-600 mb-4">🔓 Unlock Level 4</a><br>
+            <a href="lang.html" class="inline-block bg-purple-700 hover:bg-purple-800 px-6 py-2 rounded-full font-bold">Back to Languages</a>
+          `;
+        } else {
+          quizArea.innerHTML = `
+            <h2 class="text-2xl font-bold text-red-500 mb-4">❌ Level 3 Failed!</h2>
+            <p class="mb-6">Your Score: ${score}/${questions.length}</p>
+            <a href="pythonlevel3.html" class="inline-block bg-red-600 hover:bg-red-700 px-6 py-2 rounded-full font-bold text-white mb-4">🔁 Retry Level</a><br>
+            <a href="lang.html" class="inline-block bg-purple-700 hover:bg-purple-800 px-6 py-2 rounded-full font-bold">Back to Languages</a>
+          `;
+        }
+        return;
+      }
+
+      const q = questions[current];
+      document.getElementById("question").innerText = `Q${current + 1}. ${q.q}`;
+
+      const optionsHTML = q.options.map(option => `
+        <button onclick="checkAnswer('${option}')" class="bg-white text-black font-semibold px-4 py-2 rounded-lg w-full hover:bg-yellow-100 transition">
+          ${option}
+        </button>
+      `).join("");
+
+      document.getElementById("options").innerHTML = optionsHTML;
+    }
+
+    function checkAnswer(selected) {
+      const correct = questions[current].correct;
+      const buttons = document.querySelectorAll("#options button");
+      buttons.forEach(btn => {
+        btn.disabled = true;
+        if (btn.innerText === correct) {
+          btn.classList.add("bg-green-500", "text-white");
+        } else if (btn.innerText === selected) {
+          btn.classList.add("bg-red-500", "text-white");
+        }
+      });
+
+      if (selected === correct) {
+        score++;
+      }
+
+      setTimeout(() => {
+        current++;
+        loadNextQuestion();
+      }, 1000);
+    }
+
+    loadNextQuestion();
+  </script>
+</body>
+</html>

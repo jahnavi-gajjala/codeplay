@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CodePlay Register</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: radial-gradient(circle at top left, #1e3a8a, #000);
+    }
+  </style>
+</head>
+<body class="min-h-screen text-white px-6 py-10 flex flex-col items-center">
+  <!-- Header -->
+  <h1 class="text-4xl md:text-5xl font-bold mb-6 text-center animate-bounce">
+    👾 CodePlay
+  </h1>
+  <p class="text-lg text-gray-300 mb-10 text-center max-w-xl">
+    Create your account to start playing!
+  </p>
+
+  <!-- Register Form -->
+  <div class="bg-black/30 backdrop-blur-lg p-8 rounded-2xl max-w-md w-full shadow-xl border border-white/10 text-center">
+    <h2 class="text-2xl font-bold mb-6">📝 Register</h2>
+    <form id="registerForm">
+      <div class="mb-4 text-left">
+        <label for="name" class="block text-sm font-semibold mb-1">Name</label>
+        <input type="text" id="name" name="name" 
+          class="w-full px-4 py-2 rounded-lg text-black outline-none focus:ring-2 focus:ring-yellow-400" />
+      </div>
+      <div class="mb-6 text-left">
+        <label for="password" class="block text-sm font-semibold mb-1">Password</label>
+        <input type="password" id="password" name="password" 
+          class="w-full px-4 py-2 rounded-lg text-black outline-none focus:ring-2 focus:ring-yellow-400" />
+      </div>
+      <button type="submit"
+        class="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-2 px-4 rounded-full transition">
+        ✨ Register
+      </button>
+    </form>
+  </div>
+
+  <!-- Footer -->
+  <footer class="mt-12 text-center text-gray-400 text-sm">
+    Made with ❤ by Jaanu & Nandu | CodePlay 2025
+  </footer>
+
+<script>
+  document.getElementById("registerForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const name = document.getElementById("name").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    // Empty input check
+    if (!name || !password) {
+      alert("⚠️ Please enter both Name and Password.");
+      return;
+    }
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "register.php", true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+    xhr.onload = function () {
+      const res = this.responseText.trim();
+      if (res === "success") {
+        localStorage.setItem("username", name);
+        alert("✅ Registered successfully!");
+        window.location.href = "main.html";
+      } else if (res === "exists") {
+        alert("⚠️ Username already exists.");
+      } else {
+        alert("❌ Registration failed.");
+      }
+    };
+
+    xhr.onerror = function () {
+      alert("❌ Network error: Please check your internet connection.");
+    };
+
+    xhr.send(`name=${encodeURIComponent(name)}&password=${encodeURIComponent(password)}`);
+  });
+
+  function onLoginSuccess(username) {
+    localStorage.setItem("username", username);
+    window.location.href = "playfriends.html";
+  }
+</script>
+
+</body>
+</html>

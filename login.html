@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CodePlay Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: radial-gradient(circle at top left, #1e3a8a, #000);
+    }
+  </style>
+</head>
+<body class="min-h-screen text-white px-6 py-10 flex flex-col items-center">
+  <!-- Header -->
+  <h1 class="text-4xl md:text-5xl font-bold mb-6 text-center animate-bounce">
+    👾 CodePlay
+  </h1>
+  <p class="text-lg text-gray-300 mb-10 text-center max-w-xl">
+    Learn programming languages like Python, C++, JavaScript and more by playing games!
+  </p>
+
+  <!-- Login Form -->
+  <div class="bg-black/30 backdrop-blur-lg p-8 rounded-2xl max-w-md w-full shadow-xl border border-white/10 text-center">
+    <h2 class="text-2xl font-bold mb-6">🔐 Login to Continue</h2>
+   <!-- Inside your <form> tag -->
+<form id="loginForm">
+  <div class="mb-4 text-left">
+    <label for="name" class="block text-sm font-semibold mb-1">Name</label>
+    <input type="text" id="name" name="name" 
+      class="w-full px-4 py-2 rounded-lg text-black outline-none focus:ring-2 focus:ring-yellow-400" />
+  </div>
+  <div class="mb-6 text-left">
+    <label for="password" class="block text-sm font-semibold mb-1">Password</label>
+    <input type="password" id="password" name="password" 
+      class="w-full px-4 py-2 rounded-lg text-black outline-none focus:ring-2 focus:ring-yellow-400" />
+  </div>
+  <button type="submit"
+    class="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-2 px-4 rounded-full transition">
+    🚀 Login
+  </button>
+</form>
+
+<script>
+  document.getElementById("loginForm").addEventListener("submit", function(e) {
+    e.preventDefault(); // Prevent form reload
+
+    const name = document.getElementById("name").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    // Show error if fields are empty
+    if (!name || !password) {
+      alert("⚠️ Please fill in both Name and Password.");
+      return;
+    }
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "login.php", true); // Make sure this file exists
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+    xhr.onload = function () {
+      if (this.status === 200) {
+        const response = this.responseText.trim();
+        if (response === "success") {
+          localStorage.setItem("username", name); // store name from input
+          alert("✅ Login successful!");
+          window.location.href = "main.html";
+        } else {
+          alert("❌ Invalid name or password.");
+        }
+      } else {
+        alert(`⚠️ Server error (${this.status}): Unable to process your request.`);
+      }
+    };
+
+    xhr.onerror = function () {
+      alert("❌ Network error: Please check your internet connection.");
+    };
+
+    xhr.send(`name=${encodeURIComponent(name)}&password=${encodeURIComponent(password)}`);
+  });
+
+  function onLoginSuccess(username) {
+    localStorage.setItem("username", username);
+    window.location.href = "playfriends.html";
+  }
+</script>
+
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="mt-12 text-center text-gray-400 text-sm">
+    Made with ❤ by Jaanu & Nandu | CodePlay 2025
+  </footer>
+</body>
+</html>

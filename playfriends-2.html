@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>2-Player Lobby | CodePlay</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at top left, #1e3a8a, #000);
+      font-family: 'Fredoka One', cursive;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+    }
+
+    .lobby-card {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 30px;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.2);
+      width: 400px;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+    }
+
+    .room-code {
+      font-size: 18px;
+      margin-bottom: 20px;
+      color: #ffd700;
+    }
+
+    .players {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+
+    .player {
+      width: 48%;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 10px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 0 10px #888;
+    }
+
+    .player img {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      border: 3px solid #ffd700;
+      margin-bottom: 8px;
+    }
+
+    .player .name {
+      font-size: 14px;
+      color: white;
+      margin-top: 5px;
+    }
+
+    .waiting {
+      font-size: 14px;
+      margin-top: 10px;
+      color: #ddd;
+    }
+
+    .btn {
+      margin-top: 15px;
+      background: limegreen;
+      color: black;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .btn:hover {
+      background: #00e676;
+    }
+
+    .back-link {
+      color: #87cefa;
+      margin-top: 12px;
+      display: block;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="lobby-card">
+    <h2>🎮 2-Player Lobby</h2>
+    <div class="room-code">Room Code: <strong id="roomCode">...</strong></div>
+
+    <div class="players">
+      <!-- Player 1 -->
+      <div class="player" id="player1">
+        <img id="player1Img" src="https://api.dicebear.com/7.x/adventurer/svg?seed=Player1" alt="Player 1 Avatar" />
+        <div class="name" id="player1Name">Waiting...</div>
+      </div>
+
+      <!-- Player 2 -->
+      <div class="player" id="player2">
+        <img id="player2Img" src="https://cdn-icons-png.flaticon.com/512/3593/3593952.png" alt="Waiting Avatar" />
+        <div class="name" id="player2Name">Waiting...</div>
+      </div>
+    </div>
+
+    <div class="waiting">Waiting for your friend to join...</div>
+
+    <button class="btn" onclick="startGame()">▶ Start Game</button>
+    <a href="playfriends.html" class="back-link">🔙 Back to Main Lobby</a>
+  </div>
+
+<script>
+  const roomCode = localStorage.getItem("room_code");
+  const myUsername = localStorage.getItem("username");
+  const myAvatar = localStorage.getItem("playerAvatar");
+
+  if (roomCode) {
+    document.getElementById("roomCode").innerText = roomCode;
+  }
+
+  function loadPlayers() {
+    fetch(`get_players.php?room_code=${roomCode}`)
+      .then(res => res.json())
+      .then(players => {
+        const [player1, player2] = players;
+
+        if (player1) {
+          document.getElementById("player1Name").innerText = player1;
+          const img1 = document.getElementById("player1Img");
+          img1.src = (player1 === myUsername && myAvatar)
+            ? myAvatar
+            : `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(player1)}`;
+        }
+
+        if (player2) {
+          document.getElementById("player2Name").innerText = player2;
+          const img2 = document.getElementById("player2Img");
+          img2.src = (player2 === myUsername && myAvatar)
+            ? myAvatar
+            : `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(player2)}`;
+        }
+      })
+      .catch(err => {
+        console.error("Error loading players:", err);
+      });
+  }
+
+  if (roomCode) {
+    loadPlayers();
+    setInterval(loadPlayers, 3000);
+  }
+
+  function startGame() {
+    alert("Game Started! Let's code and play 🎮");
+
+    const username = localStorage.getItem("username");
+    const roomCode = localStorage.getItem("room_code");
+
+    if (!username || !roomCode) {
+      alert("Missing username or room code.");
+      return;
+    }
+
+    fetch(`get_role.php?room_code=${roomCode}&username=${username}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.role === "player1" || data.role === "player2") {
+          window.location.href = `${data.role}game-2players.html`;
+        } else {
+          alert("Your role in this room was not found.");
+        }
+      })
+      .catch(error => {
+        console.error("Error starting game:", error);
+        alert("Something went wrong while starting the game.");
+      });
+  }
+</script>
+
+</body>
+</html>
