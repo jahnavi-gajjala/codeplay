@@ -1,6 +1,6 @@
 <?php
-// Database connection
-$conn = new mysqli("sql100.infinityfree.com", "if0_39594759", "yyALtI7pg2", "if0_39594759_codeplay");
+require __DIR__ . '/database.php';
+$conn = codeplay_db();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $roomCode = $_POST['room_code'] ?? '';  // Get room code from POST or set empty string
@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Check if room already exists in the database
-    $check = $conn->prepare("SELECT * FROM rooms WHERE room_code = ?");
+    $check = $conn->prepare("SELECT * FROM codeplay_rooms WHERE room_code = ?");
     $check->bind_param("s", $roomCode);
     $check->execute();
     $result = $check->get_result();
@@ -22,9 +22,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo "⚠️ Room already exists!";
     } else {
         // Room doesn't exist, create new room
-        $stmt = $conn->prepare("INSERT INTO rooms (room_code, created_by, player1) VALUES (?, ?, ?)");
+        $stmt = $conn->prepare("INSERT INTO codeplay_rooms (room_code, created_by, player1) VALUES (?, ?, ?)");
         $stmt->bind_param("sss", $roomCode, $username, $username);
-        
+
         if ($stmt->execute()) {
             // Room created successfully
             echo "Room created successfully! Your room code: " . $roomCode;
