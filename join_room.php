@@ -1,5 +1,6 @@
 <?php
-$conn = new mysqli("sql100.infinityfree.com", "if0_39594759", "yyALtI7pg2", "if0_39594759_codeplay");
+require __DIR__ . '/database.php';
+$conn = codeplay_db();
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -7,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
 
     // Check if room exists
-    $check = $conn->prepare("SELECT * FROM rooms WHERE room_code = ?");
+    $check = $conn->prepare("SELECT * FROM codeplay_rooms WHERE room_code = ?");
     $check->bind_param("s", $roomCode);
     $check->execute();
     $result = $check->get_result();
@@ -47,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Update available slot
-    $update = $conn->prepare("UPDATE rooms SET $slot = ? WHERE room_code = ?");
+    $update = $conn->prepare("UPDATE codeplay_rooms SET $slot = ? WHERE room_code = ?");
     $update->bind_param("ss", $username, $roomCode);
 
     if ($update->execute()) {
