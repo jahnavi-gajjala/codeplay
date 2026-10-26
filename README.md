@@ -1,54 +1,60 @@
 # CodePlay 🎮💻
 
-A programming-learning platform that turns coding practice into an interactive, game-based experience.
+A gamified programming-learning platform that turns quiz practice into a social, real-time experience.
 
-## Overview
+## Problem it addresses
 
-CodePlay combines programming quizzes with multiplayer rooms, real-time score synchronization, and leaderboards to make coding practice more engaging.
+Programming practice can feel isolating and repetitive. CodePlay combines quiz levels, multiplayer rooms, live score updates, and leaderboards to make learning more engaging.
 
-## Key Features
+## Features
 
-- Programming quiz levels
-- Multiplayer room creation and joining
+- User registration and login
+- Programming quiz levels with progressive unlocks
+- Create and join multiplayer rooms
 - Real-time score synchronization
-- Leaderboards
-- User authentication
+- Leaderboards and result views
 - Avatar selection
 - Responsive UI
-- Support for programming-language quiz content
 
-## Tech Stack
+## Tech stack
 
-- HTML
-- CSS
-- Tailwind CSS
-- JavaScript
-- PHP
-- MySQL
-- Firebase Realtime Database
+| Layer | Technology |
+| --- | --- |
+| Frontend | HTML, CSS, Tailwind CSS, JavaScript |
+| Backend | PHP |
+| Database | MySQL |
+| Real-time data | Firebase Realtime Database |
 
-## How It Works
+## Application flow
 
-1. A user registers or logs in.
-2. A player creates or joins a room.
-3. Quiz levels are unlocked progressively.
-4. Players answer programming questions.
-5. Scores are synchronized and updated.
-6. Results are shown through the leaderboard.
+1. A learner registers or signs in.
+2. The learner creates or joins a quiz room.
+3. Quiz levels unlock as the learner progresses.
+4. Scores update in real time and are reflected on the leaderboard.
 
-## Project Focus
+## Local setup
 
-The project demonstrates full-stack web development, database integration, user flows, and real-time application behavior.
+1. Install and start **XAMPP** (Apache and MySQL).
+2. Place this repository inside the XAMPP `htdocs` directory.
+3. Import the supplied SQL file into phpMyAdmin/MySQL, if included.
+4. Add your Firebase configuration to the project configuration file.
+5. Open `http://localhost/<project-folder>` in a browser.
 
-## Future Improvements
+## Skills demonstrated
 
-- AI-assisted coding practice
+- Full-stack web development
+- Authentication and user flows
+- MySQL database integration
+- Firebase real-time synchronization
+- Multiplayer room and leaderboard concepts
+
+## Roadmap
+
 - Daily coding challenges
-- Additional programming languages
-- Voice chat
-- Mobile application support
+- More programming-language question banks
+- AI-assisted practice feedback
+- Mobile-friendly experience
 
-## Contributors
+## Team
 
-Jahnavi Gajjala and Nanditha
-
+Built by **Jahnavi Gajjala and Nanditha**.
